@@ -1,10 +1,10 @@
 all: course
 
-course: prereq.o main.o
-	g++ prereq.o main.o -o course
+course: courseNode.o main.o
+	g++ courseNode.o main.o -o course
 
-prereq.o: prereq.cpp
-	g++ -c prereq.cpp prereq.h
+courseNode.o: courseNode.cpp
+	g++ -c courseNode.cpp courseNode.h
 
 main.o: main.cpp
 	g++ -c main.cpp
