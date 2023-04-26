@@ -32,7 +32,24 @@ unordered_map<string, courseNode> ReadCourses(string filename)
 
         while (ss >> word)
         {
-            courseNode* prereq_obj;
+            if (word == id)
+            {
+                continue;
+            }
+            bool isAlreadyPrereq = false;
+            for (auto const &prereq : obj.prereq)
+            {
+                if (prereq->courseName == word)
+                {
+                    isAlreadyPrereq = true;
+                    break;
+                }
+            }
+            if (isAlreadyPrereq)
+            {
+                continue; // skip adding already present prerequisite
+            }
+            courseNode *prereq_obj;
             auto foundPrereq = course_id.find(word);
             if (foundPrereq != course_id.end())
             {
@@ -58,7 +75,6 @@ unordered_map<string, courseNode> ReadCourses(string filename)
     infile.close();
     return course_id;
 }
-
 
 int main()
 {
