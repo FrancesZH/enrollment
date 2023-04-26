@@ -77,10 +77,22 @@ unordered_map<string, courseNode> ReadCourses(string filename)
     infile.close();
     return course_id;
 }
-
-int main()
+bool checkCircularDependencies(unordered_map<string, courseNode> courses, string currentCourse)
 {
-    string filename = "courses.txt";
+    // for (auto const &[id, course] : courses)
+    // {
+    // }
+}
+bool contain(unordered_map<string, courseNode> courses, string course1, string course2)
+{
+    // for (auto const &[id, node] : courses)
+    // {
+    //     if (courses->courseName)
+    // }
+}
+int main(int argc, char *argv[])
+{
+    string filename = argv[1];
     unordered_map<string, courseNode> course_id = ReadCourses(filename);
     cout << "\n\n----------------\n\n";
     int prerequisitesCount = 0;
@@ -99,6 +111,9 @@ int main()
         }
         if (prerequisitesCount > 6)
             cout << "\nNot Viable: Exceeds 6 prerequisites";
+
+        // cout << "\nNot Viable: prerequisites have circular dependencies";
+
         prerequisitesCount = 0;
         cout << endl;
     }

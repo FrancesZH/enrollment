@@ -14,6 +14,6 @@ courseNode::courseNode()
 
 void courseNode::addPrereq(courseNode *node)
 {
-    cout << "push";
+    // cout << "push";
     prereq.push_back(node);
 }
