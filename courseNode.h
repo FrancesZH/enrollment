@@ -8,6 +8,7 @@ class courseNode
 public:
     string courseName;
     string semID;
+    int level;
     vector<courseNode *> prereq;
     courseNode(string courseName);
     courseNode();

@@ -18,8 +18,6 @@ unordered_map<string, courseNode> ReadCourses(string filename)
         string id, word;
         ss >> id;
         bool isNew = true;
-        // vector<courseNode> prereq;
-        cout << "\nid:" << id << "\tprereq:";
         auto foundObj = course_id.find(id);
         courseNode obj;
         if (foundObj != course_id.end())
@@ -34,13 +32,20 @@ unordered_map<string, courseNode> ReadCourses(string filename)
 
         while (ss >> word)
         {
-            cout << word << " ";
-            courseNode pre_obj = courseNode(word);
-            obj.addPrereq(&pre_obj);
-            cout << "len=" << obj.prereq.size() << endl;
-            course_id.emplace(word, pre_obj);
-            // prereq.push_back(pre_obj);
+            courseNode* prereq_obj;
+            auto foundPrereq = course_id.find(word);
+            if (foundPrereq != course_id.end())
+            {
+                prereq_obj = &(foundPrereq->second);
+            }
+            else
+            {
+                prereq_obj = new courseNode(word);
+                course_id.emplace(word, *prereq_obj);
+            }
+            obj.addPrereq(prereq_obj);
         }
+
         if (isNew)
         {
             course_id.emplace(id, obj);
@@ -54,6 +59,7 @@ unordered_map<string, courseNode> ReadCourses(string filename)
     return course_id;
 }
 
+
 int main()
 {
     string filename = "courses.txt";
@@ -61,12 +67,17 @@ int main()
     cout << "\n\n----------------\n\n";
     for (auto const &[id, node] : course_id)
     {
-        cout << node.courseName << " " << node.prereq.size() << endl;
+        // cout << node.courseName << " " << node.prereq() << endl;
         // if (node.prereq[0] != nullptr)
         // {
         //     cout << node.prereq[0]->courseName << "\n";
         // }
+        cout << node.courseName << " Prereq:";
+        for (auto const &prereq : node.prereq)
+        {
+            cout << " " << prereq->courseName;
+        }
+        cout << endl;
     }
     return 0;
 }
-
