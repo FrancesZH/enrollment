@@ -14,62 +14,64 @@ unordered_map<string, courseNode> ReadCourses(string filename)
     string line;
     while (getline(infile, line))
     {
-        stringstream ss(line);
-        string id, word;
-        ss >> id;
-        bool isNew = true;
-        auto foundObj = course_id.find(id);
-        courseNode obj;
-        if (foundObj != course_id.end())
+        if (line != "")
         {
-            obj = foundObj->second;
-            isNew = false;
-        }
-        else
-        {
-            obj = courseNode(id);
-        }
-
-        while (ss >> word)
-        {
-            if (word == id)
+            stringstream ss(line);
+            string id, word;
+            ss >> id;
+            bool isNew = true;
+            auto foundObj = course_id.find(id);
+            courseNode obj;
+            if (foundObj != course_id.end())
             {
-                continue;
-            }
-            bool isAlreadyPrereq = false;
-            for (auto const &prereq : obj.prereq)
-            {
-                if (prereq->courseName == word)
-                {
-                    isAlreadyPrereq = true;
-                    break;
-                }
-            }
-            if (isAlreadyPrereq)
-            {
-                continue; // skip adding already present prerequisite
-            }
-            courseNode *prereq_obj;
-            auto foundPrereq = course_id.find(word);
-            if (foundPrereq != course_id.end())
-            {
-                prereq_obj = &(foundPrereq->second);
+                obj = foundObj->second;
+                isNew = false;
             }
             else
             {
-                prereq_obj = new courseNode(word);
-                course_id.emplace(word, *prereq_obj);
+                obj = courseNode(id);
             }
-            obj.addPrereq(prereq_obj);
-        }
 
-        if (isNew)
-        {
-            course_id.emplace(id, obj);
-        }
-        else
-        {
-            course_id[id] = obj;
+            while (ss >> word)
+            {
+                if (word == id)
+                {
+                    continue;
+                }
+                bool isAlreadyPrereq = false;
+                for (auto const &prereq : obj.prereq)
+                {
+                    if (prereq->courseName == word)
+                    {
+                        isAlreadyPrereq = true;
+                        break;
+                    }
+                }
+                if (isAlreadyPrereq)
+                {
+                    continue; // skip adding already present prerequisite
+                }
+                courseNode *prereq_obj;
+                auto foundPrereq = course_id.find(word);
+                if (foundPrereq != course_id.end())
+                {
+                    prereq_obj = &(foundPrereq->second);
+                }
+                else
+                {
+                    prereq_obj = new courseNode(word);
+                    course_id.emplace(word, *prereq_obj);
+                }
+                obj.addPrereq(prereq_obj);
+            }
+            if (isNew)
+            {
+                course_id.emplace(id, obj);
+            }
+            else
+            {
+                course_id[id] = obj;
+            }
         }
     }
     infile.close();
@@ -81,6 +83,7 @@ int main()
     string filename = "courses.txt";
     unordered_map<string, courseNode> course_id = ReadCourses(filename);
     cout << "\n\n----------------\n\n";
+    int prerequisitesCount = 0;
     for (auto const &[id, node] : course_id)
     {
         // cout << node.courseName << " " << node.prereq() << endl;
@@ -92,7 +95,11 @@ int main()
         for (auto const &prereq : node.prereq)
         {
             cout << " " << prereq->courseName;
+            prerequisitesCount++;
         }
+        if (prerequisitesCount > 6)
+            cout << "\nNot Viable: Exceeds 6 prerequisites";
+        prerequisitesCount = 0;
         cout << endl;
     }
     return 0;
