@@ -1,13 +1,13 @@
-all: course
+all: pr_check
 
-course: courseNode.o main.o
-	g++ courseNode.o main.o -o course
+pr_check: courseNode.o pr_check.o
+	g++ courseNode.o pr_check.o -o pr_check
 
 courseNode.o: courseNode.cpp
 	g++ -c courseNode.cpp courseNode.h
 
-main.o: main.cpp
-	g++ -c main.cpp
+pr_check.o: pr_check.cpp
+	g++ -c pr_check.cpp
 
 clean:
-	rm -f *.o *.h.gch course
+	rm -f *.o *.h.gch pr_check
