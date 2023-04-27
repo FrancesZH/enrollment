@@ -9,9 +9,10 @@ public:
     string courseName;
     string semID;
     int level;
-    vector<courseNode *> prereq;
+    vector<vector<string>> prereq;
     courseNode(string courseName);
     courseNode();
 
-    void addPrereq(courseNode *node);
+    void addPrereq(vector<string> prereqVector);
 };
+

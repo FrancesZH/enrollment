@@ -12,8 +12,13 @@ courseNode::courseNode()
 {
 }
 
-void courseNode::addPrereq(courseNode *node)
+void courseNode::addPrereq(vector<string> prereqVector)
 {
     // cout << "push";
-    prereq.push_back(node);
+    prereq.push_back(prereqVector);
 }
+// void courseNode::addPrereq(vector prereqVector)
+// {
+//     // cout << "push";
+//     prereqVector.push_back(prereqVector);
+// }

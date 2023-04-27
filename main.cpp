@@ -20,15 +20,15 @@ unordered_map<string, courseNode> ReadCourses(string filename)
             string id, word;
             ss >> id;
             bool isNew = true;
-            auto foundObj = course_id.find(id);
+            auto foundObj = course_id.find(id); // checking if the course exist in the map
             courseNode obj;
             if (foundObj != course_id.end())
-            {
+            { // course already exist
                 obj = foundObj->second;
                 isNew = false;
             }
             else
-            {
+            { // new course
                 obj = courseNode(id);
             }
 
@@ -39,30 +39,35 @@ unordered_map<string, courseNode> ReadCourses(string filename)
                     continue;
                 }
                 bool isAlreadyPrereq = false;
-                for (auto const &prereq : obj.prereq)
+                for (auto const prereq : obj.prereq) // looping through the vector
                 {
-                    if (prereq->courseName == word)
-                    {
-                        isAlreadyPrereq = true;
-                        break;
-                    }
+                    for (auto const prereqCourseID : prereq) // looping through each index of the vector . i.e vector of vector
+                        if (prereqCourseID == word)
+                        {
+                            isAlreadyPrereq = true;
+                            break;
+                        }
                 }
                 if (isAlreadyPrereq)
                 {
                     continue; // skip adding already present prerequisite
                 }
-                courseNode *prereq_obj;
+                string prereq_ID;
+                courseNode prereq_obj(word);
                 auto foundPrereq = course_id.find(word);
                 if (foundPrereq != course_id.end())
-                {
-                    prereq_obj = &(foundPrereq->second);
+                { // pre req already exist in map
+                    prereq_ID = (foundPrereq->second.courseName);
                 }
                 else
-                {
-                    prereq_obj = new courseNode(word);
-                    course_id.emplace(word, *prereq_obj);
+                { // pre req does not exist in map
+
+                    course_id.emplace(word, prereq_obj);
+                    prereq_ID = word;
                 }
-                obj.addPrereq(prereq_obj);
+                vector<string> prereqvector;
+                prereqvector.push_back(prereq_ID);
+                obj.addPrereq(prereqvector);
             }
             if (isNew)
             {
@@ -77,19 +82,7 @@ unordered_map<string, courseNode> ReadCourses(string filename)
     infile.close();
     return course_id;
 }
-bool checkCircularDependencies(unordered_map<string, courseNode> courses, string currentCourse)
-{
-    // for (auto const &[id, course] : courses)
-    // {
-    // }
-}
-bool contain(unordered_map<string, courseNode> courses, string course1, string course2)
-{
-    // for (auto const &[id, node] : courses)
-    // {
-    //     if (courses->courseName)
-    // }
-}
+
 int main(int argc, char *argv[])
 {
     string filename = argv[1];
@@ -98,23 +91,23 @@ int main(int argc, char *argv[])
     int prerequisitesCount = 0;
     for (auto const &[id, node] : course_id)
     {
-        // cout << node.courseName << " " << node.prereq() << endl;
-        // if (node.prereq[0] != nullptr)
-        // {
-        //     cout << node.prereq[0]->courseName << "\n";
-        // }
-        cout << node.courseName << " Prereq:";
-        for (auto const &prereq : node.prereq)
+        cout << node.courseName << " Prereq: ";
+        for (auto const &prereqVector : node.prereq)
         {
-            cout << " " << prereq->courseName;
-            prerequisitesCount++;
+            cout << "[";
+            for (auto const &prereqID : prereqVector)
+            {
+                cout << " " << prereqID;
+            }
+            cout << " ] ";
         }
-        if (prerequisitesCount > 6)
+        if (node.prereq.size() > 6)
+        {
             cout << "\nNot Viable: Exceeds 6 prerequisites";
+        }
 
         // cout << "\nNot Viable: prerequisites have circular dependencies";
 
-        prerequisitesCount = 0;
         cout << endl;
     }
     return 0;
