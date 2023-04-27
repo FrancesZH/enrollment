@@ -31,6 +31,7 @@ unordered_map<string, courseNode> ReadCourses(string filename)
             { // new course
                 obj = courseNode(id);
             }
+            vector<string> prereqvector;
 
             while (ss >> word)
             {
@@ -65,10 +66,10 @@ unordered_map<string, courseNode> ReadCourses(string filename)
                     course_id.emplace(word, prereq_obj);
                     prereq_ID = word;
                 }
-                vector<string> prereqvector;
                 prereqvector.push_back(prereq_ID);
-                obj.addPrereq(prereqvector);
             }
+            obj.addPrereq(prereqvector);
+
             if (isNew)
             {
                 course_id.emplace(id, obj);
