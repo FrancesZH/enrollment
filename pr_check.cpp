@@ -89,7 +89,6 @@ int main(int argc, char *argv[])
     string filename = argv[1];
     unordered_map<string, courseNode> course_id = ReadCourses(filename);
     cout << "\n\n----------------\n\n";
-    int prerequisitesCount = 0;
     for (auto const &[id, node] : course_id)
     {
         cout << node.courseName << " Prereq: ";
@@ -102,11 +101,7 @@ int main(int argc, char *argv[])
             }
             cout << " ] ";
         }
-        if (node.prereq.size() > 6)
-        {
-            cout << "\nNot Viable: Exceeds 6 prerequisites";
-        }
-
+        // cout << "\nNot Viable: Exceeds 6 prerequisites";
         // cout << "\nNot Viable: prerequisites have circular dependencies";
 
         cout << endl;
