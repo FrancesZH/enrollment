@@ -13,8 +13,9 @@ int main(int argc, char *argv[])
     string prereqfile = argv[1];
     ifstream prereqs(prereqfile);
     unordered_map<string, vector<vector<string>>> prerequisites;
-    vector<vector<string>> prereqDoubleVector;
     string line;
+    vector<vector<string>> prereqDoubleVector;
+
     while (getline(prereqs, line))
     {
         vector<string> prereqVector;
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
 
         if (line != "")
         {
+
             stringstream currentLine(line);
             currentLine >> course;
 
@@ -40,21 +42,6 @@ int main(int argc, char *argv[])
 
             // Assign the vector of prerequisites to the key in the unordered_map
             prerequisites[course] = prereqDoubleVector;
-        }
-
-        for (const auto &course : prerequisites)
-        {
-            cout << course.first << ": ";
-            for (const auto &prerequisites_list : course.second)
-            {
-                cout << "[";
-                for (const auto &prerequisite : prerequisites_list)
-                {
-                    cout << prerequisite << " ";
-                }
-                cout << "]";
-            }
-            cout << endl;
         }
 
         // Read schedule file
@@ -97,5 +84,19 @@ int main(int argc, char *argv[])
         //         cout << coursesPerSemester[semester] << endl;
         //     }
         // }
+    }
+    for (const auto &course : prerequisites)
+    {
+        cout << course.first << ": ";
+        for (const auto &prerequisites_list : course.second)
+        {
+            cout << "[";
+            for (const auto &prerequisite : prerequisites_list)
+            {
+                cout << prerequisite << " ";
+            }
+            cout << "]";
+        }
+        cout << endl;
     }
 }
