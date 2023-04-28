@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 #include <unordered_map>
 #include "courseNode.h"
 #include <sstream>
@@ -84,32 +85,96 @@ unordered_map<string, courseNode> ReadCourses(string filename)
     return course_id;
 }
 
+bool dfs(courseNode node, unordered_map<string, courseNode> courses, vector<string> visited, vector<string> &depend)
+{
+    //Mark the current node as visited
+    visited.push_back(node.courseName);
+
+    //Go through all the prerequisites of the current node
+    for (auto const prereqVector : node.prereq)
+    {
+        for (auto const prereqCourse : prereqVector)
+        {
+            depend.push_back(node.courseName);
+            //Visit the prerequisite course
+            if (find(visited.begin(), visited.end(),prereqCourse) == visited.end())
+            {   
+                //recursively call the dfs, go through the prere
+                if (dfs(courses[prereqCourse], courses, visited,depend ))
+                {
+                    //circular dependency found
+                    return true; 
+                }
+            }
+            // If the prerequisite has already been visited and is still in the call stack, there is a circular dependency
+            else if (find(visited.begin(), visited.end(),prereqCourse ) != visited.end())
+            {
+                return true; // circular dependency found, return true
+            }
+        }
+    }
+    //Remove the current node from the call stack
+    visited.pop_back();
+
+    //If no circular dependencies were found, return false
+    return false;
+}
+
 int main(int argc, char *argv[])
 {
     string filename = argv[1];
     unordered_map<string, courseNode> course_id = ReadCourses(filename);
-    cout << "\n\n----------------\n\n";
-    int prerequisitesCount = 0;
-    for (auto const &[id, node] : course_id)
+    cout << "\n----------------\n";
+    
+    vector<string> visited;
+    vector<string> depend; 
+    //use to check if the course is Viable
+    bool isViable = true;
+
+    for (auto const [id, node] : course_id)
     {
-        cout << node.courseName << " Prereq: ";
-        for (auto const &prereqVector : node.prereq)
+        visited.clear();
+        if (dfs(node, course_id, visited, depend))
         {
-            cout << "[";
-            for (auto const &prereqID : prereqVector)
+            cout << "Not Viable: prerequisites have circular dependencies" << endl;
+            
+            //print the dependency out
+            cout << "Dependency : " ; 
+            for(int i = 0 ; i < depend.size() ; i ++)
             {
-                cout << " " << prereqID;
+                cout << depend[i] << " " ;
             }
-            cout << " ] ";
-        }
-        if (node.prereq.size() > 6)
-        {
-            cout << "\nNot Viable: Exceeds 6 prerequisites";
-        }
 
-        // cout << "\nNot Viable: prerequisites have circular dependencies";
-
-        cout << endl;
+            cout << endl;
+            isViable = false;
+            break;
+        }
     }
-    return 0;
+
+    if (isViable)
+    {
+         cout << "Viable!!!" << endl << endl;
+
+        int prerequisitesCount = 0;
+        for (auto const &[id, node] : course_id)
+        {
+            cout << node.courseName << " Prereq: ";
+            for (auto const &prereqVector : node.prereq)
+            {
+                cout << "[";
+                for (auto const &prereqID : prereqVector)
+                {
+                    cout << " " << prereqID;
+                }
+                cout << " ] ";
+            }
+
+            if (node.prereq.size() > 6)
+            {
+                cout << "\nNot Viable: Exceeds 6 prerequisites";
+            }
+
+            cout << endl;
+        }
+    }
 }
