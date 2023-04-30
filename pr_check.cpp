@@ -8,7 +8,7 @@
 
 using namespace std;
 
-unordered_map<string, courseNode> ReadCourses(string filename)
+unordered_map<string, courseNode> ReadCourses(string filename, bool &selfDepend)
 {
     unordered_map<string, courseNode> course_id;
     ifstream infile(filename);
@@ -38,6 +38,7 @@ unordered_map<string, courseNode> ReadCourses(string filename)
             {
                 if (word == id)
                 {
+                    selfDepend = true;
                     cout << "Not Viable: Course " << id << " has itself as a prerequisite" << endl;
                     continue;
                 }
@@ -125,8 +126,9 @@ bool dfs(courseNode node, unordered_map<string, courseNode> courses, vector<stri
 
 int main(int argc, char *argv[])
 {
+    bool selfDepend = false; 
     string filename = argv[1];
-    unordered_map<string, courseNode> course_id = ReadCourses(filename);
+    unordered_map<string, courseNode> course_id = ReadCourses(filename,selfDepend);
 
     //-----------------------------------------------------------------------
     vector<string> visited;
@@ -154,7 +156,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (isViable)
+    if (isViable && !selfDepend)
     {
         cout << "Viable!!!!" << endl;
     }
