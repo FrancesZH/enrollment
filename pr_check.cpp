@@ -5,6 +5,7 @@
 #include "courseNode.h"
 #include <sstream>
 #include <algorithm>
+#include <queue>
 
 using namespace std;
 
@@ -122,6 +123,55 @@ bool dfs(courseNode node, unordered_map<string, courseNode> courses, vector<stri
     // If no circular dependencies were found, return false
     return false;
 }
+
+bool bfs(courseNode node, unordered_map<string, courseNode> courses)
+{
+    queue<string> vertices;
+    unordered_map<string, bool> visited;
+    unordered_map<string, int> distances;
+    
+    //Put the node into the queue and make all the visit false
+    vertices.push(node.courseName);
+    for (auto it : courses) {
+        visited[it.first] = false;
+    }
+
+    visited[node.courseName] = true;
+    distances[node.courseName] = 0;
+    
+    // Traverse the graph while the queue is not empty
+    while (!vertices.empty()) 
+    {
+        string currentVertex = vertices.front();
+        vertices.pop();
+        
+        // Traverse all the adjacent vertex of the current vertex
+        for (auto adjacent : courses[currentVertex].prereq) 
+        {
+            // Check the adjacent vertex is visited, if not mark them as visited
+
+            for (auto prereq : adjacent)
+            {
+                //if the adjacent vertex is not visit, mark it as visited 
+                if(!visited[prereq]) 
+                {
+                    visited[prereq] = true;
+
+                    //count the distance front the vertex to adjacent
+                    distances[prereq] = distances[currentVertex] + 1;
+                    vertices.push(prereq);
+                }
+            }
+            // If the distance is over 6 return true
+            if (distances[currentVertex] + 1 > 6) {
+                return true;
+            }
+        }
+    }
+    
+    //No vertex exceed distance of 6
+    return false;
+}
 //-----------------------------------------------------------------------
 
 int main(int argc, char *argv[])
@@ -156,7 +206,18 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (isViable && !selfDepend)
+    bool over6semester = true;
+    for (auto const [id, node] : course_id)
+    {
+        if (bfs(node, course_id))
+        {
+            cout << "Not Viable: : Exceeds 6 prerequisites" << endl;
+            over6semester = false;
+            break;
+        }
+    }
+
+    if (isViable && !selfDepend && over6semester)
     {
         cout << "Viable!!!!" << endl;
     }
