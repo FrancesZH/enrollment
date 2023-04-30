@@ -88,36 +88,36 @@ unordered_map<string, courseNode> ReadCourses(string filename)
 //-----------------------------------------------------------------------
 bool dfs(courseNode node, unordered_map<string, courseNode> courses, vector<string> visited, vector<string> &depend)
 {
-    //Mark the current node as visited
+    // Mark the current node as visited
     visited.push_back(node.courseName);
 
-    //Go through all the prerequisites of the current node
+    // Go through all the prerequisites of the current node
     for (auto const prereqVector : node.prereq)
     {
         for (auto const prereqCourse : prereqVector)
         {
             depend.push_back(node.courseName);
-            //Visit the prerequisite course
-            if (find(visited.begin(), visited.end(),prereqCourse) == visited.end())
-            {   
-                //recursively call the dfs, go through the prere
-                if (dfs(courses[prereqCourse], courses, visited,depend ))
+            // Visit the prerequisite course
+            if (find(visited.begin(), visited.end(), prereqCourse) == visited.end())
+            {
+                // recursively call the dfs, go through the prere
+                if (dfs(courses[prereqCourse], courses, visited, depend))
                 {
-                    //circular dependency found
-                    return true; 
+                    // circular dependency found
+                    return true;
                 }
             }
             // If the prerequisite has already been visited and is still in the call stack, there is a circular dependency
-            else if (find(visited.begin(), visited.end(),prereqCourse ) != visited.end())
+            else if (find(visited.begin(), visited.end(), prereqCourse) != visited.end())
             {
                 return true; // circular dependency found, return true
             }
         }
     }
-    //Remove the current node from the call stack
+    // Remove the current node from the call stack
     visited.pop_back();
 
-    //If no circular dependencies were found, return false
+    // If no circular dependencies were found, return false
     return false;
 }
 //-----------------------------------------------------------------------
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
 
     //-----------------------------------------------------------------------
     vector<string> visited;
-    vector<string> depend; 
-    //use to check if the course is Viable
+    vector<string> depend;
+    // use to check if the course is Viable
     bool isViable = true;
 
     for (auto const [id, node] : course_id)
@@ -139,12 +139,12 @@ int main(int argc, char *argv[])
         if (dfs(node, course_id, visited, depend))
         {
             cout << "Not Viable: prerequisites have circular dependencies" << endl;
-            
-            //print the dependency out
-            cout << "Dependency : " ; 
-            for(int i = 0 ; i < depend.size() ; i ++)
+
+            // print the dependency out
+            cout << "Dependency : ";
+            for (int i = 0; i < depend.size(); i++)
             {
-                cout << depend[i] << " " ;
+                cout << depend[i] << " ";
             }
 
             cout << endl;
@@ -153,9 +153,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(isViable)
+    if (isViable)
     {
-        cout << "Viable!!!!" << endl ;
+        cout << "Viable!!!!" << endl;
     }
     //-----------------------------------------------------------------------
 
