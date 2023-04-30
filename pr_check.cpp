@@ -38,6 +38,7 @@ unordered_map<string, courseNode> ReadCourses(string filename)
             {
                 if (word == id)
                 {
+                    cout << "Not Viable: Course " << id << " has itself as a prerequisite" << endl;
                     continue;
                 }
                 bool isAlreadyPrereq = false;
