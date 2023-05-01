@@ -4,6 +4,9 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
+#include "prCheck.cpp"
+#include "schCheck.cpp"
+
 using namespace std;
 
 struct student
@@ -62,14 +65,17 @@ void Heapsort(vector<student> &tree)
   }
 }
 
-student search(vector<student> &tree, string bnumber) {
-    for (int i = 0; i < tree.size(); i++) {
-        if (tree[i].BNumber == bnumber) {
-            return tree[i];
-        }
+student search(vector<student> &tree, string bnumber)
+{
+  for (int i = 0; i < tree.size(); i++)
+  {
+    if (tree[i].BNumber == bnumber)
+    {
+      return tree[i];
     }
-    // if student not found, return a default student object
-    return student{"", 0};
+  }
+  // if student not found, return a default student object
+  return student{"", 0};
 }
 
 void remove_student(vector<student> &tree, string bnumber)
@@ -102,114 +108,113 @@ void remove_student(vector<student> &tree, string bnumber)
 
 //---------------------------------------------------------
 
-void readin(string filename, vector<student> &MaxHeap, unordered_map<string, vector<student>> &waitlist )
+void readin(string filename, vector<student> &MaxHeap, unordered_map<string, vector<student>> &waitlist)
 {
-    ifstream infile(filename);
-    string line;
+  ifstream infile(filename);
+  string line;
 
-    while (getline(infile, line))
+  while (getline(infile, line))
+  {
+    if (line != "")
     {
-        if (line != "")
+      stringstream ss(line);
+      string command;
+      ss >> command;
+
+      // Read in the first "word" to check which function have to use
+      if (command == "newlist")
+      {
+        string CourseName;
+        ss >> CourseName;
+
+        // create a waitlist with default student
+        waitlist[CourseName] = vector<student>();
+      }
+      else if (command == "add")
+      {
+        string BNum, CourseName;
+        int priority;
+
+        ss >> BNum >> CourseName >> priority;
+
+        // create student with BNum and priority point, put them in heap
+        student s;
+        s.BNumber = BNum;
+        s.priority = priority;
+
+        MaxHeap.push_back(s);
+
+        waitlist[CourseName].push_back(s);
+      }
+      else if (command == "promote")
+      {
+        string BNum, CourseName;
+        int priority;
+
+        ss >> BNum >> CourseName >> priority;
+
+        // find the student
+        student temp = search(MaxHeap, BNum);
+
+        // store student's priority point
+        int temp_priority = temp.priority;
+
+        remove_student(MaxHeap, BNum);
+
+        temp.priority = temp_priority + priority;
+
+        // Insert the student back in the heap
+        MaxHeap.push_back(temp);
+        Heapsort(MaxHeap);
+      }
+      else if (command == "enroll")
+      {
+        string CourseName;
+        ss >> CourseName;
+        student s;
+
+        if (waitlist[CourseName].empty())
         {
-            stringstream ss(line);
-            string command;
-            ss >> command;
- 
-            //Read in the first "word" to check which function have to use
-            if(command == "newlist")
-            {
-                string CourseName;
-                ss >> CourseName;
-
-                //create a waitlist with default student
-                waitlist[CourseName] = vector<student>(); 
-
-            }
-            else if(command =="add")
-            {
-                string BNum, CourseName;
-                int priority;
-
-                ss >> BNum >> CourseName >> priority;
-
-                //create student with BNum and priority point, put them in heap
-                student s; 
-                s.BNumber = BNum; 
-                s.priority = priority; 
-
-                MaxHeap.push_back(s);
-
-                waitlist[CourseName].push_back(s); 
-            }
-            else if(command == "promote")
-            {
-                string BNum, CourseName;
-                int priority;
-
-                ss >> BNum >> CourseName >> priority;
-
-                //find the student
-                student temp = search(MaxHeap, BNum);
-
-                //store student's priority point
-                int temp_priority = temp.priority;
-
-                remove_student(MaxHeap, BNum);
-
-                temp.priority = temp_priority + priority ; 
-
-                //Insert the student back in the heap
-                MaxHeap.push_back(temp);
-                Heapsort(MaxHeap);
-                
-            }
-            else if(command == "enroll")
-            {
-                string CourseName;
-                ss >> CourseName;
-                student s;
-
-                if (waitlist[CourseName].empty()) 
-                {
-                    cout << "No students waiting for course " << CourseName << endl;
-                }
-                else
-                {
-                    s = MaxHeap.back();
-                    MaxHeap.pop_back();
-
-                    cout << "Enrolling studeng " << s.BNumber << " in course " << CourseName << endl;
-                }
-
-                //loop over alll the course and set the student's pirority to 0
-                for(auto & [course, students]: waitlist)
-                {
-                    for (auto& student : students) 
-                    {
-                        if (student.BNumber == s.BNumber) 
-                        {
-                            student.priority = 0;
-                        }
-                    }
-                }
-            }
+          cout << "No students waiting for course " << CourseName << endl;
         }
+        else
+        {
+          s = MaxHeap.back();
+          MaxHeap.pop_back();
+
+          cout << "Enrolling studeng " << s.BNumber << " in course " << CourseName << endl;
+        }
+
+        // loop over alll the course and set the student's pirority to 0
+        for (auto &[course, students] : waitlist)
+        {
+          for (auto &student : students)
+          {
+            if (student.BNumber == s.BNumber)
+            {
+              student.priority = 0;
+            }
+          }
+        }
+      }
     }
+  }
 }
 
 //---------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
-  //create a heap of student
+  //./waitlist 2023Fall prerequisites.txt schedules.txt enroll.txt
+  // create a heap of student
   vector<student> MaxHeap;
-  //create a list of course with list of students
-  unordered_map<string, vector<student>> waitlist; 
+  // create a list of course with list of students
+  unordered_map<string, vector<student>> waitlist;
 
   string semester = argv[1];
   string prereqfile = argv[2];
   string schedsfile = argv[3];
   string enrollmentfile = argv[4];
-
-  readin(enrollmentfile, MaxHeap, waitlist);
+  if (prCheck(prereqfile)) // check whether the prereqfile viable
+    readin(enrollmentfile, MaxHeap, waitlist);
 }

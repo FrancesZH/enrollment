@@ -174,7 +174,7 @@ bool bfs(courseNode node, unordered_map<string, courseNode> courses)
     return false;
 }
 //-----------------------------------------------------------------------
-void prCheck(string filename)
+bool prCheck(string filename)
 {
     bool selfDepend = false;
     unordered_map<string, courseNode> course_id = ReadCourses(filename, selfDepend);
@@ -211,6 +211,7 @@ void prCheck(string filename)
         if (bfs(node, course_id))
         {
             cout << "Not Viable: : Exceeds 6 prerequisites" << endl;
+            return false;
             over6semester = false;
             break;
         }
@@ -219,6 +220,7 @@ void prCheck(string filename)
     if (isViable && !selfDepend && over6semester)
     {
         cout << "Viable!!!!" << endl;
+        return true;
     }
     //-----------------------------------------------------------------------
 
@@ -237,10 +239,5 @@ void prCheck(string filename)
         }
         cout << endl;
     }
-}
-int main(int argc, char *argv[])
-{
-    string filename = argv[1];
-    prCheck(filename);
-    return 0;
+    return true;
 }
