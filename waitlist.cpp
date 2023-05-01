@@ -6,7 +6,6 @@
 #include <unordered_map>
 #include "prCheck.cpp"
 #include "schCheck.cpp"
-
 using namespace std;
 
 struct student
@@ -16,7 +15,26 @@ struct student
 };
 
 //---------------------------------------------------------
-
+void findStudent(string BNumber, string schedules, string sem, string prereqfile)
+{
+  ifstream infile(schedules);
+  string line;
+  string currentBNumber, currentStudentFile;
+  while (getline(infile, line))
+  {
+    stringstream ss(line);
+    ss >> currentBNumber >> currentStudentFile;
+    if (line != "")
+    {
+      if (currentBNumber == BNumber)
+      {
+        schCheck(prereqfile, currentStudentFile, sem);
+        cout << currentBNumber << " " << currentStudentFile << endl;
+        break;
+      }
+    }
+  }
+}
 void MaxHeapPercolateDown(int nodeIndex, vector<student> &tree, int size)
 {
   int childIndex = 2 * nodeIndex + 1;
@@ -108,7 +126,7 @@ void remove_student(vector<student> &tree, string bnumber)
 
 //---------------------------------------------------------
 
-void readin(string filename, vector<student> &MaxHeap, unordered_map<string, vector<student>> &waitlist)
+void readin(string prereqfile, string filename, vector<student> &MaxHeap, unordered_map<string, vector<student>> &waitlist, string schedules, string sem)
 {
   ifstream infile(filename);
   string line;
@@ -136,7 +154,7 @@ void readin(string filename, vector<student> &MaxHeap, unordered_map<string, vec
         int priority;
 
         ss >> BNum >> CourseName >> priority;
-
+        findStudent(BNum, schedules, sem, prereqfile);
         // create student with BNum and priority point, put them in heap
         student s;
         s.BNumber = BNum;
@@ -213,8 +231,8 @@ int main(int argc, char *argv[])
 
   string semester = argv[1];
   string prereqfile = argv[2];
-  string schedsfile = argv[3];
+  string schedules = argv[3];
   string enrollmentfile = argv[4];
   if (prCheck(prereqfile)) // check whether the prereqfile viable
-    readin(enrollmentfile, MaxHeap, waitlist);
+    readin(prereqfile, enrollmentfile, MaxHeap, waitlist, schedules, semester);
 }
