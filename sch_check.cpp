@@ -5,8 +5,54 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
+
+void sort_courses_by_season(string input_file, string output_file)
+{
+    // Open input file and read lines
+    ifstream input(input_file);
+    vector<string> lines;
+    string line;
+    while (getline(input, line))
+    {
+        if (line != "")
+            lines.push_back(line);
+    }
+    input.close();
+
+    // Sort lines by year and season
+    sort(lines.begin(), lines.end(),
+         [](const string &a, const string &b)
+         {
+             string a_1 = a.substr(a.find(' ') + 1);
+             string b_1 = b.substr(b.find(' ') + 1);
+             //  cout << a << "---" << a_1 << "---" << (a_1.substr(0, 4)) << endl;
+             int year_a = stoi(a_1.substr(0, 4));
+             string season_a = a_1.substr(4);
+             int year_b = stoi(b_1.substr(0, 4));
+             string season_b = b_1.substr(4);
+
+             if (year_a != year_b)
+             {
+                 return year_a < year_b;
+             }
+             else
+             {
+                 // Compare seasons based on alphabetical order
+                 return season_a < season_b;
+             }
+         });
+
+    // Write sorted lines to output file
+    ofstream output(output_file);
+    for (const auto &line : lines)
+    {
+        output << line << endl;
+    }
+    output.close();
+}
 
 int main(int argc, char *argv[])
 {
@@ -45,9 +91,11 @@ int main(int argc, char *argv[])
 
     // Read schedule file
     string schedulefile = argv[2];
-    ifstream schedule(schedulefile);
     unordered_set<string> courses;
     unordered_map<string, int> coursesPerSemester;
+    string sortedprereqfile = "sortedprereqfile.txt";
+    sort_courses_by_season(schedulefile, sortedprereqfile);
+    ifstream schedule(sortedprereqfile);
 
     while (getline(schedule, line))
     {
@@ -70,8 +118,11 @@ int main(int argc, char *argv[])
                     bool allPrereqsTakenInVector = false;
                     for (const string &prereq : prereqVector)
                     {
+                        // cout << "debug:" << prereq << endl;
+                        // cout << "---";
                         if (courses.count(prereq))
                         {
+
                             allPrereqsTakenInVector = true;
                             break;
                         }
