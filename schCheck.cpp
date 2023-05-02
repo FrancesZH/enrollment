@@ -92,8 +92,8 @@ bool schCheck(string prereqfile, string schedulefile, string sem = "null")
     unordered_set<string> courses;
     unordered_map<string, int> coursesPerSemester;
     string sortedPrereqfile = "sortedPrereqfile.txt";
-    sortCourses(schedulefile, sortedPrereqfile);
-    ifstream schedule(sortedPrereqfile);
+    sortCourses(schedulefile, schedulefile);
+    ifstream schedule(schedulefile);
 
     while (getline(schedule, line))
     {

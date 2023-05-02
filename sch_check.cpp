@@ -93,9 +93,10 @@ int main(int argc, char *argv[])
     string schedulefile = argv[2];
     unordered_set<string> courses;
     unordered_map<string, int> coursesPerSemester;
-    string sortedprereqfile = "sortedprereqfile.txt";
-    sort_courses_by_season(schedulefile, sortedprereqfile);
-    ifstream schedule(sortedprereqfile);
+    sort_courses_by_season(schedulefile, schedulefile);
+    unordered_map<string, string> periods;
+
+    ifstream schedule(schedulefile);
 
     while (getline(schedule, line))
     {
@@ -103,7 +104,8 @@ int main(int argc, char *argv[])
         {
             stringstream currentLine(line);
             string course, semester;
-            currentLine >> course;
+            currentLine >> course >> semester;
+            periods.insert({course, semester});
 
             if (courses.count(course))
             {
@@ -118,16 +120,19 @@ int main(int argc, char *argv[])
                     bool allPrereqsTakenInVector = false;
                     for (const string &prereq : prereqVector)
                     {
-                        // cout << "debug:" << prereq << endl;
-                        // cout << "---";
                         if (courses.count(prereq))
                         {
-
+                            // Check if prerequisite is being taken at the same time as current course
+                            if (periods[prereq] == periods[course])
+                            {
+                                cout << "Error: " << prereq << " is a prerequisite for " << course
+                                     << " and is being taken at the same time." << endl;
+                                return 0;
+                            }
                             allPrereqsTakenInVector = true;
                             break;
                         }
                     }
-
                     if (!allPrereqsTakenInVector)
                     {
                         allPrereqsTaken = false;
@@ -141,14 +146,11 @@ int main(int argc, char *argv[])
                         break;
                     }
                 }
-
                 if (allPrereqsTaken)
                 {
                     courses.insert(course);
                 }
             }
-
-            currentLine >> semester;
             coursesPerSemester[semester]++;
             if (coursesPerSemester[semester] > 3)
             {
