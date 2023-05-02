@@ -12,7 +12,7 @@ public:
     vector<vector<string>> prereq;
     courseNode(string courseName);
     courseNode();
-
+    ~courseNode();
     void addPrereq(vector<string> prereqVector);
 };
 

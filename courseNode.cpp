@@ -10,6 +10,12 @@ courseNode::courseNode(string courseName)
 }
 courseNode::courseNode()
 {
+
+}
+
+courseNode::~courseNode()
+{
+    // delete courseName;
 }
 
 void courseNode::addPrereq(vector<string> prereqVector)

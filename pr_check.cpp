@@ -10,9 +10,11 @@ using namespace std;
 
 unordered_map<string, courseNode> ReadCourses(string filename, bool &selfDepend)
 {
+    cout << "1" << endl;
     unordered_map<string, courseNode> course_id;
     ifstream infile(filename);
     string line;
+    cout << "2" << endl;
     while (getline(infile, line))
     {
         if (line != "")
@@ -90,6 +92,7 @@ unordered_map<string, courseNode> ReadCourses(string filename, bool &selfDepend)
 //-----------------------------------------------------------------------
 bool dfs(courseNode node, unordered_map<string, courseNode> courses, vector<string> visited, vector<string> &depend)
 {
+    cout << "3" << endl;
     // Mark the current node as visited
     visited.push_back(node.courseName);
 
@@ -125,6 +128,7 @@ bool dfs(courseNode node, unordered_map<string, courseNode> courses, vector<stri
 
 bool bfs(courseNode node, unordered_map<string, courseNode> courses)
 {
+    cout << "4" << endl;
     queue<string> vertices;
     unordered_map<string, bool> visited;
     unordered_map<string, int> distances;
@@ -176,6 +180,7 @@ bool bfs(courseNode node, unordered_map<string, courseNode> courses)
 //-----------------------------------------------------------------------
 void prCheck(string filename)
 {
+    cout << "5" << endl;
     bool selfDepend = false;
     unordered_map<string, courseNode> course_id = ReadCourses(filename, selfDepend);
 
@@ -240,7 +245,12 @@ void prCheck(string filename)
 }
 int main(int argc, char *argv[])
 {
+    cout << "6" << endl;
     string filename = argv[1];
+    cout << "6" << endl;
+
     prCheck(filename);
+    cout << "6" << endl;
+
     return 0;
 }
