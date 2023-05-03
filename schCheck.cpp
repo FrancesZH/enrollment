@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void sortCourses(string input_file, string output_file)
+void sort_courses_by_season(string input_file, string output_file)
 {
     // Open input file and read lines
     ifstream input(input_file);
@@ -54,10 +54,10 @@ void sortCourses(string input_file, string output_file)
     output.close();
 }
 
-bool schCheck(string prereqfile, string schedulefile, string sem = "null")
+bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null")
 {
     // Read prerequisites file
-    ifstream prereqs(prereqfile);
+    ifstream prereqs(prerequisitesFile);
     unordered_map<string, vector<vector<string>>> prerequisites;
     string line;
 
@@ -91,9 +91,10 @@ bool schCheck(string prereqfile, string schedulefile, string sem = "null")
     // Read schedule file
     unordered_set<string> courses;
     unordered_map<string, int> coursesPerSemester;
-    string sortedPrereqfile = "sortedPrereqfile.txt";
-    sortCourses(schedulefile, schedulefile);
-    ifstream schedule(schedulefile);
+    sort_courses_by_season(scheduleFile, scheduleFile);
+    unordered_map<string, string> periods;
+
+    ifstream schedule(scheduleFile);
 
     while (getline(schedule, line))
     {
@@ -101,11 +102,13 @@ bool schCheck(string prereqfile, string schedulefile, string sem = "null")
         {
             stringstream currentLine(line);
             string course, semester;
-            currentLine >> course;
+            currentLine >> course >> semester;
+            periods.insert({course, semester});
 
             if (courses.count(course))
             {
                 cout << "Duplicate course" << endl;
+                return false;
             }
             else
             {
@@ -116,16 +119,24 @@ bool schCheck(string prereqfile, string schedulefile, string sem = "null")
                     bool allPrereqsTakenInVector = false;
                     for (const string &prereq : prereqVector)
                     {
-                        // cout << "debug:" << prereq << endl;
-                        // cout << "---";
                         if (courses.count(prereq))
                         {
-
+                            // Check if prerequisite is being taken at the same time as current course
+                            if (periods[prereq] == periods[course])
+                            {
+                                cout << "Error: " << prereq << " is a prerequisite for " << course
+                                     << " and is being taken at the same time." << endl;
+                                return false;
+                            }
+                            allPrereqsTakenInVector = true;
+                            break;
+                        }
+                        if (periods[prereq] > sem)
+                        {
                             allPrereqsTakenInVector = true;
                             break;
                         }
                     }
-
                     if (!allPrereqsTakenInVector)
                     {
                         allPrereqsTaken = false;
@@ -134,22 +145,22 @@ bool schCheck(string prereqfile, string schedulefile, string sem = "null")
                             if (!courses.count(prereq))
                             {
                                 cout << course << " Prerequisite not taken: " << prereq << endl;
+                                return false;
                             }
                         }
                         break;
                     }
                 }
-
                 if (allPrereqsTaken)
                 {
                     courses.insert(course);
                 }
             }
-            currentLine >> semester;
             coursesPerSemester[semester]++;
             if (coursesPerSemester[semester] > 3)
             {
                 cout << "more than 3 courses taken" << endl;
+                return false;
             }
         }
     }
@@ -168,6 +179,5 @@ bool schCheck(string prereqfile, string schedulefile, string sem = "null")
         }
         cout << endl;
     }
-
     return true;
 }

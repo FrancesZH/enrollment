@@ -54,11 +54,10 @@ void sort_courses_by_season(string input_file, string output_file)
     output.close();
 }
 
-int main(int argc, char *argv[])
+bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null")
 {
     // Read prerequisites file
-    string prereqfile = argv[1];
-    ifstream prereqs(prereqfile);
+    ifstream prereqs(prerequisitesFile);
     unordered_map<string, vector<vector<string>>> prerequisites;
     string line;
 
@@ -90,13 +89,12 @@ int main(int argc, char *argv[])
     }
 
     // Read schedule file
-    string schedulefile = argv[2];
     unordered_set<string> courses;
     unordered_map<string, int> coursesPerSemester;
-    sort_courses_by_season(schedulefile, schedulefile);
+    sort_courses_by_season(scheduleFile, scheduleFile);
     unordered_map<string, string> periods;
 
-    ifstream schedule(schedulefile);
+    ifstream schedule(scheduleFile);
 
     while (getline(schedule, line))
     {
@@ -129,6 +127,12 @@ int main(int argc, char *argv[])
                                      << " and is being taken at the same time." << endl;
                                 return 0;
                             }
+                            allPrereqsTakenInVector = true;
+                            break;
+                        }
+                        if (periods[prereq] > sem)
+                        {
+                            cout << "testing" << endl;
                             allPrereqsTakenInVector = true;
                             break;
                         }
@@ -173,6 +177,13 @@ int main(int argc, char *argv[])
         }
         cout << endl;
     }
+    return true;
+}
+int main(int argc, char *argv[])
+{
+    string prereqfile = argv[1];
+    string schedulefile = argv[2];
 
+    schCheck(prereqfile, schedulefile);
     return 0;
 }

@@ -1,3 +1,5 @@
+newlist CS_320
+enroll CS_320
 newlist CS_310
 add B00112233 CS_310 10
 add B00445566 CS_310 20
