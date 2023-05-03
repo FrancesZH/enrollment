@@ -54,7 +54,7 @@ void sort_courses_by_season(string input_file, string output_file)
     output.close();
 }
 
-bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null")
+bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null", string course = "null")
 {
     // Read prerequisites file
     ifstream prereqs(prerequisitesFile);

@@ -15,7 +15,7 @@ struct student
 };
 
 //---------------------------------------------------------
-bool findStudent(string BNumber, string schedules, string sem, string prereqfile)
+bool findStudent(string BNumber, string schedules, string sem, string prereqfile, string courseToTake)
 {
   ifstream infile(schedules);
   string line;
@@ -28,7 +28,7 @@ bool findStudent(string BNumber, string schedules, string sem, string prereqfile
     {
       if (currentBNumber == BNumber)
       {
-        if (schCheck(prereqfile, currentStudentFile, sem))
+        if (schCheck(prereqfile, currentStudentFile, sem, courseToTake))
         {
           cout << currentBNumber << " " << currentStudentFile << endl;
           return true;
@@ -36,6 +36,7 @@ bool findStudent(string BNumber, string schedules, string sem, string prereqfile
       }
     }
   }
+
   return false;
 }
 void MaxHeapPercolateDown(int nodeIndex, vector<student> &tree, int size)
@@ -157,7 +158,7 @@ void readin(string prereqfile, string filename, unordered_map<string, vector<stu
         int priority;
 
         ss >> BNum >> CourseName >> priority;
-        if (findStudent(BNum, schedules, sem, prereqfile))
+        if (findStudent(BNum, schedules, sem, prereqfile, CourseName))
         {
           // create student with BNum and priority point, put them in heap
           student s;

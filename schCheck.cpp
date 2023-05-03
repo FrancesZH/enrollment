@@ -53,8 +53,27 @@ void sort_courses_by_season(string input_file, string output_file)
     }
     output.close();
 }
+bool semesterCheck(string sem1, string sem2)
+{
+    int year1 = stoi(sem1.substr(0, 4));
+    int year2 = stoi(sem2.substr(0, 4));
+    string semester1 = sem1.substr(4);
+    string semester2 = sem2.substr(4);
+    if (year1 >= year2)
+    {
+        return true;
+    }
+    else if (year1 < year2)
+    {
+        return false;
+    }
+    else
+    {
+        return semester1 > semester1;
+    }
+}
 
-bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null")
+bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null", string courseToTake = "null")
 {
     // Read prerequisites file
     ifstream prereqs(prerequisitesFile);
@@ -116,6 +135,17 @@ bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null"
                 bool allPrereqsTaken = true;
                 for (const vector<string> &prereqVector : prerequisites[course])
                 {
+                    for (const string &prereq : prereqVector)
+                    {
+                        if (periods[prereq] >= sem)
+                        {
+                            cout << course << " prerequisites not taken before semester " << sem << endl;
+                            return false;
+                        }
+                    }
+                }
+                for (const vector<string> &prereqVector : prerequisites[course])
+                {
                     bool allPrereqsTakenInVector = false;
                     for (const string &prereq : prereqVector)
                     {
@@ -128,11 +158,18 @@ bool schCheck(string prerequisitesFile, string scheduleFile, string sem = "null"
                                      << " and is being taken at the same time." << endl;
                                 return false;
                             }
-                            allPrereqsTakenInVector = true;
-                            break;
-                        }
-                        if (periods[prereq] > sem)
-                        {
+                            if (course == courseToTake)
+                            {
+                                cout << course << " " << courseToTake << endl;
+
+                                cout << "---------testing--------" << endl;
+                                if (semester != "null" && !semesterCheck(sem, periods[prereq]))
+                                {
+
+                                    cout << courseToTake << " cannot be taken before its designated semester." << endl;
+                                    return false;
+                                }
+                            }
                             allPrereqsTakenInVector = true;
                             break;
                         }
