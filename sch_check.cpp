@@ -49,6 +49,7 @@ void sort_courses_by_season(string input_file, string output_file)
     ofstream output(output_file);
     for (const auto &line : lines)
     {
+
         output << line << endl;
     }
     output.close();

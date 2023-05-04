@@ -30,13 +30,12 @@ bool findStudent(string BNumber, string schedules, string sem, string prereqfile
       {
         if (schCheck(prereqfile, currentStudentFile, sem, courseToTake))
         {
-          cout << currentBNumber << " " << currentStudentFile << endl;
+
           return true;
         }
       }
     }
   }
-
   return false;
 }
 void MaxHeapPercolateDown(int nodeIndex, vector<student> &tree, int size)
@@ -82,6 +81,7 @@ void Heapsort(vector<student> &tree)
 
   for (int i = tree.size() - 1; i > 0; i--)
   {
+
     swap(tree[0], tree[i]);
     MaxHeapPercolateDown(0, tree, i);
   }
