@@ -182,23 +182,25 @@ bool prCheck(string filename)
     vector<string> depend;
     // use to check if the course is Viable
     bool isViable = true;
-
-    for (auto const [id, node] : course_id)
+    if (!selfDepend)
     {
-        visited.clear();
-        if (dfs(node, course_id, visited, depend))
+        for (auto const [id, node] : course_id)
         {
-            cout << "Not Viable: prerequisites have circular dependencies" << endl;
-
-            // print the dependency out
-            cout << "Dependency : ";
-            for (int i = 0; i < depend.size(); i++)
+            visited.clear();
+            if (dfs(node, course_id, visited, depend))
             {
-                cout << depend[i] << " ";
+                cout << "Not Viable: prerequisites have circular dependencies" << endl;
+
+                // print the dependency out
+                cout << "Dependency : ";
+                for (int i = 0; i < depend.size(); i++)
+                {
+                    cout << depend[i] << " ";
+                }
+                cout << endl;
+                isViable = false;
+                break;
             }
-            cout << endl;
-            isViable = false;
-            break;
         }
     }
 

@@ -98,7 +98,7 @@ bool scheduleFileCheck(string courseToCheck, string semesterToCheck, unordered_s
     periods.insert({courseToCheck, semesterToCheck});
     if (courses.count(courseToCheck))
     {
-        cout << "Error: Duplicate courses" << endl;
+        cout << "Error: Duplicate courses: " << courseToCheck << endl;
         return false;
     }
     else
