@@ -6,8 +6,6 @@
 #include <sstream>
 #include <algorithm>
 #include <queue>
-using namespace std;
-
 unordered_map<string, courseNode> ReadCourses(string filename, bool &selfDepend)
 {
     unordered_map<string, courseNode> course_id;
@@ -198,7 +196,6 @@ bool prCheck(string filename)
             {
                 cout << depend[i] << " ";
             }
-
             cout << endl;
             isViable = false;
             break;
@@ -211,33 +208,31 @@ bool prCheck(string filename)
         if (bfs(node, course_id))
         {
             cout << "Not Viable: : Exceeds 6 prerequisites" << endl;
-            return false;
             over6semester = false;
+            return false;
             break;
         }
     }
 
     if (isViable && !selfDepend && over6semester)
     {
-        cout << "Viable!!!!" << endl;
+        cout << "Viable" << endl;
         return true;
     }
-    //-----------------------------------------------------------------------
-
-    cout << "\n\n----------------\n\n";
-    for (auto const &[id, node] : course_id)
-    {
-        cout << node.courseName << " Prereq: ";
-        for (auto const &prereqVector : node.prereq)
-        {
-            cout << "[";
-            for (auto const &prereqID : prereqVector)
-            {
-                cout << " " << prereqID;
-            }
-            cout << " ] ";
-        }
-        cout << endl;
-    }
     return true;
+    // cout << "\n\n----------------\n\n";
+    // for (auto const &[id, node] : course_id)
+    // {
+    //     cout << node.courseName << " Prereq: ";
+    //     for (auto const &prereqVector : node.prereq)
+    //     {
+    //         cout << "[";
+    //         for (auto const &prereqID : prereqVector)
+    //         {
+    //             cout << " " << prereqID;
+    //         }
+    //         cout << " ] ";
+    //     }
+    //     cout << endl;
+    // }
 }

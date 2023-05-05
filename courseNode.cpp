@@ -10,7 +10,6 @@ courseNode::courseNode(string courseName)
 }
 courseNode::courseNode()
 {
-
 }
 
 courseNode::~courseNode()
@@ -20,11 +19,5 @@ courseNode::~courseNode()
 
 void courseNode::addPrereq(vector<string> prereqVector)
 {
-    // cout << "push";
     prereq.push_back(prereqVector);
 }
-// void courseNode::addPrereq(vector prereqVector)
-// {
-//     // cout << "push";
-//     prereqVector.push_back(prereqVector);
-// }

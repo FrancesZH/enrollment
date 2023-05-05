@@ -126,6 +126,7 @@ bool scheduleFileCheck(string courseToCheck, string semesterToCheck, unordered_s
                             return false;
                         }
                     }
+
                     allPrereqsTakenInVector = true;
                 }
             }
