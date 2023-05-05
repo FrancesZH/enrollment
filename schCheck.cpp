@@ -6,9 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
-
 using namespace std;
-//
 void sort_courses_by_season(string input_file, string output_file)
 {
     // Open input file and read lines

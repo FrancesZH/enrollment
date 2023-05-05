@@ -63,11 +63,13 @@ unordered_map<string, courseNode> ReadCourses(string filename, bool &selfDepend)
                 }
                 else
                 { // pre req does not exist in map
-
                     course_id.emplace(word, prereq_obj);
                     prereq_ID = word;
                 }
-                prereqvector.push_back(prereq_ID);
+                if (find(prereqvector.begin(), prereqvector.end(), word) == prereqvector.end())//== --> no element found
+                {
+                    prereqvector.push_back(prereq_ID);
+                }
             }
             obj.addPrereq(prereqvector);
 
@@ -189,52 +191,50 @@ bool prCheck(string filename)
             visited.clear();
             if (dfs(node, course_id, visited, depend))
             {
-                cout << "Not Viable: prerequisites have circular dependencies" << endl;
+                cout << "Prerequisite File Not Viable: prerequisites have circular dependencies" << endl;
 
                 // print the dependency out
                 cout << "Dependency : ";
-                for (int i = 0; i < depend.size(); i++)
+                for (int i = 0; i < depend.size() - 1; i++)
                 {
-                    cout << depend[i] << " ";
+                    cout << depend[i] << "-->";
                 }
-                cout << endl;
+                cout << depend[depend.size() - 1] << endl;
                 isViable = false;
-                break;
+                // return false;
             }
         }
     }
-
     bool over6semester = true;
     for (auto const [id, node] : course_id)
     {
         if (bfs(node, course_id))
         {
-            cout << "Not Viable: : Exceeds 6 prerequisites" << endl;
+            cout << "Prerequisite File Not Viable: : Exceeds 6 prerequisites" << endl;
             over6semester = false;
             return false;
-            break;
         }
     }
 
     if (isViable && !selfDepend && over6semester)
     {
-        cout << "Viable" << endl;
-        return true;
+        cout << "Prerequisite File Viable" << endl;
+        // return true;
+    }
+    cout << "\n\n----------------\n\n";
+    for (auto const &[id, node] : course_id)
+    {
+        cout << node.courseName << " Prereq: ";
+        for (auto const &prereqVector : node.prereq)
+        {
+            cout << "[";
+            for (auto const &prereqID : prereqVector)
+            {
+                cout << " " << prereqID;
+            }
+            cout << " ] ";
+        }
+        cout << endl;
     }
     return true;
-    // cout << "\n\n----------------\n\n";
-    // for (auto const &[id, node] : course_id)
-    // {
-    //     cout << node.courseName << " Prereq: ";
-    //     for (auto const &prereqVector : node.prereq)
-    //     {
-    //         cout << "[";
-    //         for (auto const &prereqID : prereqVector)
-    //         {
-    //             cout << " " << prereqID;
-    //         }
-    //         cout << " ] ";
-    //     }
-    //     cout << endl;
-    // }
 }

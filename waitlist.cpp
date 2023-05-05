@@ -30,7 +30,6 @@ bool findStudent(string BNumber, string schedules, string sem, string prereqfile
       {
         if (schCheck(prereqfile, currentStudentFile, sem, courseToTake))
         {
-
           return true;
         }
       }
@@ -167,6 +166,12 @@ void readin(string prereqfile, string filename, unordered_map<string, vector<stu
           // MaxHeap.push_back(s);
           waitlist[CourseName].push_back(s);
         }
+        else
+        {
+          cout << "BNum: " << BNum << endl;
+          cout << "Error: Student's schedule contains an error --- Waitlist Halts" << endl;
+          break;
+        }
       }
       else if (command == "promote")
       {
@@ -237,4 +242,6 @@ int main(int argc, char *argv[])
   string enrollmentfile = argv[4];
   if (prCheck(prereqfile)) // check whether the prereqfile viable
     readin(prereqfile, enrollmentfile, waitlist, schedules, semester);
+  else
+    cout << "Error: Prerequisites file contains an error --- Waitlist Halts" << endl;
 }
